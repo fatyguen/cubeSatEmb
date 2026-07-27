@@ -1,6 +1,7 @@
 from twin.battery import Battery
 from twin.cpu import CPU
 from twin.sensors import TemperatureSensor
+from twin.faults import FaultManager
 
 class CubeSat:
     def __init__(self, config, logger):
@@ -12,6 +13,8 @@ class CubeSat:
             max_temp=config["cpu_max_temp"]
         )
         self.temp_sensor = TemperatureSensor()
+        self.fault_manager = FaultManager(logger)
+        self.comm_ok = True
         self.mode = "NORMAL"
         self.tick_count = 0
 
@@ -30,14 +33,18 @@ class CubeSat:
         if reading is None:
             self.logger.warning("Temperature sensor offline")
 
+        # faults
+        self.fault_manager.update(self)
+
         # state machine
         self._update_mode()
 
         # log a status line every tick
+        comm_status = "OK" if self.comm_ok else "TIMEOUT"
         self.logger.info(
             f"[tick {self.tick_count}] mode={self.mode} "
             f"{self.battery.status()} | {self.cpu.status()} | "
-            f"ext_temp={reading}"
+            f"ext_temp={reading} | comm={comm_status}"
         )
 
     def _update_mode(self):
