@@ -2,6 +2,7 @@ from twin.battery import Battery
 from twin.cpu import CPU
 from twin.sensors import TemperatureSensor
 from twin.faults import FaultManager
+from twin.telemetry import TelemetryRecorder
 
 class CubeSat:
     def __init__(self, config, logger):
@@ -14,6 +15,7 @@ class CubeSat:
         )
         self.temp_sensor = TemperatureSensor()
         self.fault_manager = FaultManager(logger)
+        self.telemetry = TelemetryRecorder()
         self.comm_ok = True
         self.mode = "NORMAL"
         self.tick_count = 0
@@ -38,6 +40,9 @@ class CubeSat:
 
         # state machine
         self._update_mode()
+
+        # telemetry
+        self.telemetry.record(self, reading)
 
         # log a status line every tick
         comm_status = "OK" if self.comm_ok else "TIMEOUT"
