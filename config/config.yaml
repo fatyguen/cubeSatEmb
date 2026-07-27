@@ -1,0 +1,6 @@
+battery_capacity: 100
+battery_drain_per_tick: 2
+solar_charge_per_tick: 3
+cpu_max_temp: 80
+cpu_idle_temp: 35
+update_rate_seconds: 1
