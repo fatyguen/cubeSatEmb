@@ -51,6 +51,7 @@ class CubeSat:
             f"{self.battery.status()} | {self.cpu.status()} | "
             f"ext_temp={reading} | comm={comm_status}"
         )
+        return reading
 
     def _update_mode(self):
         if self.battery.level <= 0:
@@ -61,3 +62,5 @@ class CubeSat:
             self.mode = "LOW POWER"
         else:
             self.mode = "NORMAL"
+
+            
